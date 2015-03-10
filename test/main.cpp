@@ -27,10 +27,17 @@ class book
     int quantity;
     date added;
     float ourPrice,theirPrice;
+
+    book() {n++;};//memory allocation constructor
+    book(string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin);//
+    vector<book> add(vector<book>,int allocate,string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin);
+    vector<book> read(ifstream &source);
+    vector<book> remove(vector<book>, int allocate, int location);
+    void save(vector<book>, int allocate, string path);
     
     //Constructors
-    book() {n++;};
-    book(string titlein,string authorin,string publisherin,float ourPriceIs,float theirPriceIs,float isbnin,date addedin,int quantityin);
+    //book() {n++;};
+    //book(string titlein,string authorin,string publisherin,float ourPriceIs,float theirPriceIs,float isbnin,date addedin,int quantityin);
 
     //NOTE: Do NOT add the decrement operator, i.e. {n--;} 
     //to a class destructor for the counter of objects here.
@@ -331,3 +338,49 @@ book::book(string titlein,string authorin,string publisherin,float ourPriceIs,fl
     n++;
 };
 
+//Add function
+vector<book> book::add(vector<book> starting,int allocate,string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin){
+    vector<book> added;
+    book addee(titlein,authorin,publisherin,wholesaleIs,retailIs,isbnin,addedin,quantityin);
+    added = vector<book>(allocate+1);
+    for (int x=0; x<allocate; x++) {
+        added[x]=starting[x];
+    }
+    added[allocate]=addee;
+    return added;
+};
+
+//Save function
+void book::save(vector<book> inventory, int allocate, string path){
+    ofstream output;
+    output.open(path);
+            output<<allocate<<",,,,,,,"<<endl<<"ISBN,TITLE,AUTHOR,PUBLISHER,Date Added,Quantity On Hand,Wholesale Price,Retail" <<endl;
+    for (int x=0; x<allocate; x++) {
+
+        output<<inventory[x].ISBN<<',';
+        output<<inventory[x].title<<',';
+        output<<inventory[x].author<<',';
+        output<<inventory[x].publisher<<',';
+        output<<inventory[x].added.month<<'/'<<inventory[x].added.day<<'/'<<inventory[x].added.year<<',';
+        output<<inventory[x].quantity<<','<<inventory[x].ourPrice<<','<<inventory[x].theirPrice<<endl;
+    }
+    output.close();
+};
+
+//Remove function
+vector<book> book::remove(vector<book> inventory, int allocate, int location){
+    book star;
+    for (int x=location; x<allocate-1; x++) {
+        inventory[x]=inventory[x+1];
+    }
+    date removed;removed.day=0;removed.month=0;removed.year=0;
+    inventory[allocate-1].title='\0';
+    inventory[allocate-1].author='\0';
+    inventory[allocate-1].publisher='\0';
+    inventory[allocate-1].ISBN=0;
+    inventory[allocate-1].ourPrice=0;
+    inventory[allocate-1].theirPrice=0;
+    inventory[allocate-1].added=removed;
+    inventory[allocate-1].quantity=0;
+    return inventory;
+}
