@@ -28,17 +28,16 @@ class book
     date added;
     float ourPrice,theirPrice;
 
-    book() {n++;};//memory allocation constructor
-    book(string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin);//
+    //Constructors 
+    book() {n++;};
+    book(string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin) {n++};
+
+    //Add/read/remove/save prototypes
     vector<book> add(vector<book>,int allocate,string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin);
     vector<book> read(ifstream &source);
     vector<book> remove(vector<book>, int allocate, int location);
     void save(vector<book>, int allocate, string path);
     
-    //Constructors
-    //book() {n++;};
-    //book(string titlein,string authorin,string publisherin,float ourPriceIs,float theirPriceIs,float isbnin,date addedin,int quantityin);
-
     //NOTE: Do NOT add the decrement operator, i.e. {n--;} 
     //to a class destructor for the counter of objects here.
     //It fucks up the sort method, for reasons beyond my understanding.
