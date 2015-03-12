@@ -384,3 +384,127 @@ vector<book> book::remove(vector<book> inventory, int allocate, int location){
     inventory[allocate-1].quantity=0;
     return inventory;
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void cashier(vector<book>& pink) //Cashier module
+{
+	fstream receipt;
+	int choice, titlecounter, pquantity, totalprice;
+	int checkoutcounter = 0;
+	string titlechoice, authorchoice, cochoice;
+	int isbnchoice;
+
+	do
+	{
+		cout << "Welcome to the Cash Register Module!" << endl;
+		cout << "Please look at the Menu Below" << endl << endl;
+		cout << "###############################################\n";
+		cout << "# 1: Purchase a book by Title                 #\n";
+		cout << "# 2: Purchase a book by ISBN                  #\n";
+		cout << "# 3: Purchase a book by Author(WIP)           *\n";
+		cout << "# 4: Return to Main Menu                      #\n";
+		cout << "###############################################\n";
+		cin >> choice;
+		cout << endl;
+		// Title Searching
+		if (choice == 1)
+		{
+			bool exists = false;
+
+			cout << "Please Input the title of the book you want" << endl;
+			cin >> titlechoice;
+			
+				for (int a = 0; a < book::n; a++)
+				{
+					titlecounter++;
+					if (titlechoice == pink[a].title) exists = true;
+				}
+				if (exists = true)
+				{
+					cout << "We are pleased to have your book in our selection" << endl;
+					cout << "Would you like to add the book to Check out? (Y or N)" << endl;
+					cin >> cochoice;
+					if (cochoice == "y")
+					{
+						checkoutcounter++;
+						//reduce pink[titlecounter].quantity by integer. ///////////////WIP//////////////////////
+						cout << "How many copies would you like to buy? " << endl;
+						cin >> pquantity;
+						pink[titlecounter].quantity = pink[titlecounter].quantity - pquantity;
+						totalprice += pink[titlecounter].theirPrice * pquantity;
+						// add book into vector then read them out.
+						cochoice = "n";
+					}
+				}
+			else cout << "We are sorry, we do not have your book in our selection. " << endl;
+		}
+		// ISBN Searching
+		if (choice == 2)
+		{
+			bool exists = false;
+
+			cout << "Please Input the ISBN of the book you want" << endl;
+			cin >> isbnchoice;
+
+			for (int a = 0; a < book::n; a++)
+			{
+				titlecounter++;
+				if (isbnchoice == pink[a].ISBN) exists = true;
+			}
+			if (exists = true)
+			{
+				cout << "We are pleased to have your book in our selection" << endl;
+				cout << "Would you like to add the book to Check out? (Y or N)" << endl;
+				cin >> cochoice;
+				if (cochoice == "y")
+				{
+					checkoutcounter++;
+					//reduce pink[titlecounter].quantity by integer.
+					cout << "How many copies would you like to buy? " << endl;
+					cin >> pquantity;
+					pink[titlecounter].quantity = pink[titlecounter].quantity - pquantity;
+					totalprice += pink[titlecounter].theirPrice * pquantity;
+					// add book into vector then read them out.
+					cochoice = "n";
+				}
+			}
+			else cout << "We are sorry, we do not have your book in our selection. " << endl;
+		}
+		// Author Search
+		if (choice == 3)
+		{
+			bool exists = false;
+
+			cout << "Please Input the Author of the book you want" << endl;
+			cin >> authorchoice;
+
+			for (int a = 0; a < book::n; a++)
+			{
+				titlecounter++;
+				if (authorchoice == pink[a].author) exists = true;
+			}
+			if (exists = true)
+			{
+				cout << "We are pleased to have your book in our selection" << endl;
+				cout << "Would you like to add the book to Check out? (Y or N)" << endl;
+				cin >> cochoice;
+				if (cochoice == "y")
+				{
+					checkoutcounter++;
+					//reduce pink[titlecounter].quantity by integer.
+					cout << "How many copies would you like to buy? " << endl;
+					cin >> pquantity;
+					pink[titlecounter].quantity = pink[titlecounter].quantity - pquantity;
+					totalprice += pink[titlecounter].theirPrice * pquantity;
+					// add book into vector then read them out.
+					cochoice = "n";
+				}
+			}
+			else cout << "We are sorry, we do not have your book in our selection. " << endl;
+		}
+
+	} while (choice != 4);
+
+	// cout vector contents AKA receipt part
+	cout << "Your total balance is: " << totalprice << endl;
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
