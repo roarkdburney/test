@@ -1,7 +1,8 @@
-//Copyright Chrysanthemum Industries
+﻿//Copyright Chrysanthemum Industries
 // Roarke Burney, Zachary Prince
 // Abdollah Kasraie, Chris Yu 
 // 03/04/2015
+// Test
 
 #include<iostream>
 #include<iomanip>
