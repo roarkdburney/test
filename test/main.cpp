@@ -61,25 +61,33 @@ void inventory(vector<book>& pink) //Inventory module
       float ourPrice,theirPrice;
       
       //Prompting user for book info
-      cout << "First, enter in this book's ISBN number: ";
+      cout << "###############################################\n";
+      cout << "# Add the information prompted for.           #\n";
+      cout << "# (When prompted for prices, leave out the    #\n";
+      cout << "# (currency value. i.e. when prompted for     #\n";
+      cout << "# (price, enter 5, not $5.)                   #\n";
+      cout << "###############################################\n" << endl;
+      cout << "ISBN: ";
       cin >> ISBN;
-      cout << endl << "Now, its title: ";
-      cin >> title;
-      cout << endl << "Author: ";
-      cin >> author;
-      cout << endl << "Publisher: "; 
-      cin >> publisher;
-      cout << endl << "Quantity on hand: ";
+      cout << "Title: ";
+      getline(cin,title);
+      getline(cin,title); 
+      //These two getlines are not a typo; odd problems were encountered if I only used one
+      cout << "Author: ";
+      getline(cin,author);
+      cout << "Publisher: "; 
+      getline(cin,publisher);
+      cout << "Quantity on hand: ";
       cin >> quantity;
-      cout << endl << "Wholesale price: ";
+      cout << "Wholesale price: ";
       cin >> ourPrice;
-      cout << endl << "Retail price: ";
+      cout << "Retail price: ";
       cin >> theirPrice;
-      cout << endl << "Year added to inventory: ";
+      cout << "Year added to inventory: ";
       cin >> added.year;
-      cout << endl << "Month added to inventory: ";
+      cout << "Month added to inventory: ";
       cin >> added.month;
-      cout << endl << "Day added to inventory: ";
+      cout << "Day added to inventory: ";
       cin >> added.day;
 
       //Creating new book object with the above info
@@ -211,13 +219,17 @@ void reports(vector<book>& pink) // Report module
         cout << "DATE ADDED  :   " << pink[a].added.month << "/" << pink[a].added.day << "/";
         cout << pink[a].added.year << endl;
         cout << endl;
+        cout << "###############################################\n";
+        cout << endl;
 
         //Keep running totals of wholesale and retail prices for the report
         total_wholesale+=pink[a].ourPrice; 
         total_retail+=pink[a].theirPrice;
       }
+      cout << "###############################################\n";
       cout << "TOTAL WHOLESALE VALUE  :  $" << total_wholesale << endl;
       cout << "TOTAL RETAIL VALUE     :  $" << total_retail << endl;
+      cout << "###############################################\n";
       total_wholesale=0;
       total_retail=0; //reset for next invocation
     }
@@ -240,6 +252,8 @@ void reports(vector<book>& pink) // Report module
         cout << "DATE ADDED  :   " << pink[b].added.month << "/" << pink[b].added.day << "/";
         cout << pink[b].added.year << endl;
         cout << endl;
+        cout << "###############################################\n";
+        cout << endl;
         getchar();
       }
     }
@@ -261,6 +275,8 @@ void reports(vector<book>& pink) // Report module
         cout << "DATE ADDED  :   " << pink[c].added.month << "/" << pink[c].added.day << "/";
         cout << pink[c].added.year << endl;
         cout << endl;
+        cout << "###############################################\n";
+        cout << endl;
         getchar();
       }
     }
@@ -280,6 +296,8 @@ void reports(vector<book>& pink) // Report module
         cout << "RETAIL      :   $" << pink[d].theirPrice << endl;
         cout << "DATE ADDED  :   " << pink[d].added.month << "/" << pink[d].added.day << "/";
         cout << pink[d].added.year << endl;
+        cout << endl;
+        cout << "###############################################\n";
         cout << endl;
         getchar();
       }
@@ -374,18 +392,53 @@ int main() //Used for reading in file, and for selecting the appropriate module
 
     else if(choice==4)
     {
-      cout << "Thank you for using [program name]\n\n";
+      cout << endl << "###############################################\n";
+      cout << "# Thank you for using the ARiA business suite.#\n";
+      cout << "#                                             #\n";
+      cout << "# Any questions, comments, or feedback can be #\n";
+      cout << "# sent to customer_service@chrysanthemum.org  #\n";
+      cout << "#                                             #\n";
+      cout << "###############################################\n" << endl;
       break;
     }
 
     else if(choice==5)
     {
-      cout << "\n[software name] copyright 2015, ";
-      cout << "Chrysanthemum Industries.\n";
-      cout << "Chrssanthemum Industries are:\n";
-      cout << "Roark Burney, Zachary Prince, Abdollah Kasraie, and\n";
-      cout << "Chris Yu.\n";
-      cout << "ASCII book made by unknown patron of the internet.\n\n";
+      cout << endl;
+      cout << "###############################################\n";
+      cout << "# Software title: ARiA Business Suite         #\n";
+      cout << "#                                             #\n";
+      cout << "# Publisher: Chrysanthemum Industries, 2015   #\n";
+      cout << "#                                             #\n";
+      cout << "# Developers: Roark Burney, Zachary Prince,   #\n";
+      cout << "#             Chris Yu, Abdollah Kasraie      #\n";
+      cout << "#                                             #\n";
+      cout << "# ASCII art made by unknown patron of the     #\n";
+      cout << "# internet.                                   #\n";
+      cout << "###############################################\n";
+      cout << endl << "***********************************************\n";
+      cout << "*                                             *\n";
+      cout << "*            ARiA copyrighted 2015            *\n";
+      cout << "*           Chrysanthemum Industries          *\n"; 
+      cout << "*                                             *\n";
+      cout << "*                  /:.   ,:\\""                  *"<< endl;
+      cout << "*            .~=-./::: u  ::\\,-~=.            *" << endl;
+      cout << "*         ___|::  \\\    |    /  ::|___         *" << endl;
+      cout << "*        \\\::  `.   \\   |   /   .' :::/        *" << endl;
+      cout << "*         \\:    `.  \\  |  /  .'    :/         *" << endl;
+      cout << "*       .-: `-._  `.;;;;;;.'   _.-' :-.       *" << endl;
+      cout << "*       \\::     `-;;;;;;;;;;;-'     ::/       *" << endl;
+      cout << "*        >~------~;;;;;;;;;;;~------~<        *" << endl;
+      cout << "*        /::    _.-;;;;;;;;;;;-._    ::\\      *" << endl;
+      cout << "*       `-:_.-'   .`;;;;;;;'.   `-._:-'       *" << endl;
+      cout << "*          /    .'  /  |  \\  `.   :\\          *" << endl;
+      cout << "*         /::_.'   /   |   \\   `._::\\         *" << endl;
+      cout << "*             |:: /    |    \\  ::|            *" << endl;
+      cout << "*             `=-'\\:::.n.:::/`-=-'            *" << endl;
+      cout << "*                  \\:'   `:/                  *" << endl;
+      cout << "*                                             *\n";
+      cout << "***********************************************\n";
+      cout << endl << endl;
       cout << "(Press any key to continue.)\n\n";
       cin.get();cin.get();
       continue;
