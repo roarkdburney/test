@@ -399,19 +399,6 @@ int main() //Used for reading in file, and for selecting the appropriate module
   }
 }
 
-//Book constructor function
-book::book(string titlein,string authorin,string publisherin,float ourPriceIs,float theirPriceIs,float isbnin,date addedin,int quantityin){ 
-    title=titlein;
-    author=authorin;
-    publisher=publisherin;
-    ourPrice=ourPriceIs;
-    theirPrice=theirPriceIs;
-    ISBN=isbnin;
-    added=addedin;
-    quantity+=quantityin;
-    n++;
-};
-
 /*
 void cashier(vector<book>& pink) //Cashier module
 {

@@ -30,6 +30,19 @@ class book
 };
 
 int book::n=0; //Intitializes static counter in book class to zero
+ 
+//Book constructor function
+book::book(string titlein,string authorin,string publisherin,float ourPriceIs,float theirPriceIs,float isbnin,date addedin,int quantityin){ 
+    title=titlein;
+    author=authorin;
+    publisher=publisherin;
+    ourPrice=ourPriceIs;
+    theirPrice=theirPriceIs;
+    ISBN=isbnin;
+    added=addedin;
+    quantity+=quantityin;
+    n++;
+};
 
 void save(vector<book>& inventory, int allocate, string path)
 {
