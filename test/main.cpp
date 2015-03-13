@@ -8,61 +8,13 @@
 #include<string> // Needed for string operations
 #include<vector> // Needed for vectors
 #include<algorithm> // Needed for sort function
+#include"book.h"
+#include"date.h"
+#include"sorting.h"
 
 using namespace std;
 
-class date
-{
-  public:
-    int day,month,year;
-};
-
-class book
-{
-  public:
-    static int n; //A counter to keep track of how many book objects have been created
-    string title,author,publisher;
-    int ISBN;
-    int quantity;
-    date added;
-    float ourPrice,theirPrice;
-
-    book() {n++;};//memory allocation constructor
-    
-    //Book constructor; title,author,publisher,wholesale,retail,isbn,date,quantity 
-    book(string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin);//
-
-    vector<book> read(ifstream &source);
-    vector<book> remove(vector<book>, int allocate, int location);
-};
-
-int book::n=0; //Intitializes static counter in book class to zero
-
 string filepath="Inventory.csv";
-
-bool sortByQuantity(const book &one, const book &two) {return one.quantity>two.quantity;} 
-//returns true if the first book has more copies than the second
-bool sortByCost(const book &one, const book &two) {return one.ourPrice>two.ourPrice;}
-//returns true of the first book is more costly than the second
-bool sortByAge(const book &one, const book &two)
-{
-  bool later=false;
-  if (one.added.year>two.added.year)
-    later=true;
-  else if(one.added.year==two.added.year)
-  {
-    if (one.added.month>two.added.month)
-      later=true;
-    else if(one.added.month==two.added.month)
-    {
-      if (one.added.day>two.added.day)
-        later=true;
-    }
-  }
-  return later;
-}
-//first compares years of books. If they're different, return true. If true, then compare
-//months. If different, return true. Else, compare days. Etc.
 
 void report_message()
 {
@@ -76,24 +28,6 @@ void report_message()
   cout << "\nPress any key to continue.\n";
   cin.get();cin.get(); //Mac equivalent of doing "system("Pause")"
 }
-
-void save(vector<book>& inventory, int allocate, string path)
-{
-  ofstream output;
-  output.open(path);
-  output<<allocate<<",,,,,,,"<<endl<<"ISBN,TITLE,AUTHOR,PUBLISHER,Date Added,Quantity On Hand,Wholesale Price,Retail" <<endl;
-  for (int x=0; x<allocate; x++) 
-  {
-    output<<inventory[x].ISBN<<',';
-    output<<inventory[x].title<<',';
-    output<<inventory[x].author<<',';
-    output<<inventory[x].publisher<<',';
-    output<<inventory[x].added.month<<'/'<<inventory[x].added.day<<'/'<<inventory[x].added.year<<',';
-    output<<inventory[x].quantity<<','<<inventory[x].ourPrice<<','<<inventory[x].theirPrice<<endl;
-    
-  }
-    output.close();
-};
 
 void cashier() //Cashier module
 {
@@ -242,8 +176,6 @@ void inventory(vector<book>& pink) //Inventory module
 
 void reports(vector<book>& pink) // Report module 
 {
-  //bool sortByQuantity(const book &one, const book &two) {return one.quantity>two.quantity;} 
-  //bool sortByCost(const book &one, const book &two) {return one.ourPrice>two.ourPrice;}
   int choice;
   char choice_2;
   float total_wholesale=0;
@@ -294,6 +226,7 @@ void reports(vector<book>& pink) // Report module
     {
       report_message();
       cout << "Press enter to step through each book.\n";
+      cout << endl;
       sort(pink.begin(),pink.end(),sortByQuantity); //sorts vector by quantity
       for (int b=0; b<book::n; b++)
       {
@@ -314,6 +247,7 @@ void reports(vector<book>& pink) // Report module
     else if (choice==3) // cost
     {
       cout << "Press enter to step through each book.\n";
+      cout << endl;
       sort(pink.begin(),pink.end(),sortByCost); //sorts vector by cost
       for (int c=0; c<book::n; c++)
       {
@@ -333,6 +267,7 @@ void reports(vector<book>& pink) // Report module
     else if (choice==4) // sorts vector by date
     {
       cout << "Press enter to step through each book.\n";
+      cout << endl;
       sort(pink.begin(),pink.end(),sortByAge);
       for (int d=0; d<book::n; d++)
       {
@@ -404,9 +339,6 @@ int main() //Used for reading in file, and for selecting the appropriate module
   getline(source, titlein);
   getline(source, titlein);
   vector<book> pink(allocate); //Reads from file and creates a vector to store book information in
-  
-  //Note: I've changed it from reading into an array to reading into a vector due to the vector's superior member functions,
-  //and ability to be used with the std::sort method
   
   for (int x=0; x<allocate; x++) 
   {
