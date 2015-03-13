@@ -1,0 +1,131 @@
+FOR DATE.H
+{
+  define class date
+  {
+    attributes: day,month,year, all as ints
+    methods:
+  } 
+}
+
+FOR BOOK.H
+{
+  include date header file
+  define class book
+  {
+    static int to keep track of how many book objects were created 
+    attributes: strings: title,author,publisher
+                ints: ISBN, quantity on hand
+                floats: wholesale and retail price
+                object of date class
+    constructor: increment n when called; accept parameters for title, author, etc.
+  }
+  initialze static int to zero
+  define constructor (i.e. a setter)
+
+  define void function save, to be used for saving data to a file
+  {
+    Takes three parameters: vector of books, size of vector, file path.
+    Open file for output; write each attribute from each object of the vector
+    to the file.
+    Close the file.
+  }
+}
+
+FOR SETTING.H
+{
+  include date and book header file
+  define three boolean functions for sorting algorithms 
+  {
+    One is for sorting by quantity, one is by cost, and the other is by age.
+    All three take two parameters; two constant book objects (by reference).
+
+    Quantity: return true if the first book's quantity > second book's quantity.
+    Cost: return true if the first book's price > second book's price
+    Age:
+    {
+      Declare boolean variable and set it equal to false
+      Compare the two book object's years; if unequal, return true
+      If not
+      {
+        Compare their months; if unequal, return true
+        If not
+        {
+          compare their days; if unequal, return true
+        }
+      }
+    }
+  }
+}
+
+FOR MAIN.CPP
+{
+  include: iostream, iomanip, fstream, string, vector, algorithm, book.h, date.h, sorting.h
+  Filepath for file to read from and write to: "Inventory.csv"
+  Declare void function report_message()
+  {
+    Print list of a given book's attributes to screen
+  }
+  
+  MAIN
+  {
+  Display welcome message
+  Open file using default filepath
+  Create new book object for each line of data in file
+  Read through file, adding the appropriate attributes to each object
+  Tuck each object in one vector of book objects
+  WHILE(TRUE)
+  {
+    Give user 5 options: 
+    {
+      1: launch cashier module
+      2: launch inventory module
+      3: launch report module
+      4: exit program
+      5: credits
+    }
+    if one, call cashier module function
+    if two, call inventory module function, passing vector of books as a parameter (by ref.) 
+    if three, call report module function, passing vector of books as a parameter (by ref.)
+    if four, display exit message
+    if five, display credits
+
+  CASHIER MODULE FUNCTION
+  {
+  }
+
+  INVENTORY MODULE FUNCTION
+  {
+    Display menu of options to user; 
+
+    1: add book
+    {
+      prompt user for information for book
+      create object with the given information
+      push_back object into vector of books
+    }
+
+    2: remove book
+    {
+      display to user a list of books, listing only their title
+      give user three choices: "delete, next, exit"
+      if exit
+        break
+      if delete
+        prompt user for integer matching up to title of book to delete
+        use vector of books[user's integer].erase to erase the object from the vector
+        let user know book has been deleted
+        return to main menu
+    }
+
+    3: edit book
+
+    4: save
+      call save function in book.h
+
+    5: return to main menu
+      break;
+  }
+
+  REPORTS MODULE FUNCTION
+  {
+  }
