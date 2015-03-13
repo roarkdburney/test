@@ -1,8 +1,6 @@
-﻿//Copyright Chrysanthemum Industries
+//Copyright Chrysanthemum Industries
 // Roarke Burney, Zachary Prince
 // Abdollah Kasraie, Chris Yu 
-// 03/04/2015
-// Test
 
 #include<iostream>
 #include<iomanip>
@@ -29,20 +27,14 @@ class book
     date added;
     float ourPrice,theirPrice;
 
-    //Constructors 
-    book() {n++;};
-    book(string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin) {n++};
+    book() {n++;};//memory allocation constructor
+    
+    //Book constructor; title,author,publisher,wholesale,retail,isbn,date,quantity 
+    book(string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin);//
 
-    //Add/read/remove/save prototypes
-    vector<book> add(vector<book>,int allocate,string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin);
     vector<book> read(ifstream &source);
     vector<book> remove(vector<book>, int allocate, int location);
     void save(vector<book>, int allocate, string path);
-    
-    //NOTE: Do NOT add the decrement operator, i.e. {n--;} 
-    //to a class destructor for the counter of objects here.
-    //It fucks up the sort method, for reasons beyond my understanding.
-    //It is for this reason that I suggest that the decrement be used solely in the cashier module, not in the class destructor
 };
 
 int book::n=0; //Intitializes static counter in book class to zero
@@ -86,20 +78,143 @@ void report_message()
   cin.get();cin.get(); //Mac equivalent of doing "system("Pause")"
 }
 
-int combine(int a, int b)
-{
-   int times = 1;
-   while (times <= b)
-      times *= 10;
-   return a*times + b;
-} 
-
 void cashier() //Cashier module
 {
 }
 
-void inventory() //Inventory module
+void inventory(vector<book>& pink) //Inventory module
 {
+  int choice, book_to_delete,c=0;
+  char choice_2;
+  string choice_3;
+  while (1)
+  {
+    cout << endl;
+    cout << "       Welcome to the inventory module.     " << endl;
+    cout << "      What would you like to accomplish?    " << endl;
+    cout << "###############################################\n";
+    cout << "# 1: Add a book                               #\n";
+    cout << "# 2: Remove a book                            #\n";
+    cout << "# 3: Edit a book                              #\n";
+    cout << "# 4: Save current inventory to disk           #\n";
+    cout << "# 5: Return to Main Menu                      #\n";
+    cout << "###############################################\n";
+    cin >> choice;
+    cout << endl;
+
+    if (choice==1) //Adding a book
+    {
+      string title,author,publisher;
+      int ISBN,quantity;
+      date added;
+      float ourPrice,theirPrice;
+      
+      //Prompting user for book info
+      cout << "First, enter in this book's ISBN number: ";
+      cin >> ISBN;
+      cout << endl << "Now, its title: ";
+      cin >> title;
+      cout << endl << "Author: ";
+      cin >> author;
+      cout << endl << "Publisher: "; 
+      cin >> publisher;
+      cout << endl << "Quantity on hand: ";
+      cin >> quantity;
+      cout << endl << "Wholesale price: ";
+      cin >> ourPrice;
+      cout << endl << "Retail price: ";
+      cin >> theirPrice;
+      cout << endl << "Year added to inventory: ";
+      cin >> added.year;
+      cout << endl << "Month added to inventory: ";
+      cin >> added.month;
+      cout << endl << "Day added to inventory: ";
+      cin >> added.day;
+
+      //Creating new book object with the above info
+      book blue(title,author,publisher,ourPrice,theirPrice,ISBN,added,quantity);
+      
+      //Pushing object into vector of books
+      pink.push_back(blue);
+    }
+    else if (choice==2) //Deleting a book
+    {
+      for (int a=0;a<book::n;a+=10)
+      {
+        cout << endl;
+        cout << "###############################################\n";
+        cout << "Now displaying books " << a << " through " << (a+9) << endl;
+        cout << "If the book you wish to delete is listed here," << endl;
+        cout << "type 'delete'. Otherwise, type 'next' for the" << endl;
+        cout << "next selection of books. To exit, type 'exit'.\n";
+        cout << "###############################################\n";
+        cout << endl;
+        for (int b=0; b<10; b++)
+        {
+          cout << c << ": " << pink[c].title << endl;
+          c++;
+        }
+        cout << endl;
+        cout << "Choice: ";
+        cin >> choice_3;
+
+        if (choice_3=="delete")
+        {
+          cout << "###############################################\n";
+          cout << "#  Enter in the integer number corresponding  #\n";
+          cout << "#    to the book that you wish to delete.     #\n";
+          cout << "###############################################\n";
+          cin >> book_to_delete;
+
+          if (book_to_delete>-1&&book_to_delete<book::n)
+          {
+            pink.erase(pink.begin()+book_to_delete); //Clear desired book from vector
+            cout << endl;
+            cout << "###############################################\n";
+            cout << "# All data relating to said book has been     #\n";
+            cout << "#    removed. Returning to main menu...       #\n";
+            cout << "###############################################\n";
+            cout << endl; 
+            c=0; //Reset counter to zero
+            break;
+          }
+          else
+          {
+            cout << "Invalid selection. Returning to main menu...\n";
+            break;
+          }
+        }
+        else if (choice_3=="exit")
+          break;
+        else if (choice_3=="next")
+          continue;
+        else
+          cout << "Invalid choice. Continuing...\n";
+      }
+      cout << endl;
+      cout << "###############################################\n";
+      cout << "# End of list reached. Exiting to main menu...#\n";
+      cout << "###############################################\n";
+    }
+    else if (choice==3) // Implement save function here
+    {
+    }
+    else if (choice==4) // Implement search and editing of vectors here
+    {
+    }
+    else if (choice==5) // Quits inventory module
+      break;
+    else
+    {
+      cout << "Invalid entry. Try again?\n";
+      cout << "('Y' key for yes; any other key to exit.)\n";
+      cin >> choice_2;
+      if(choice_2=='Y')
+        continue;
+      else
+        break;
+    }
+  }
 }
 
 void reports(vector<book>& pink) // Report module 
@@ -238,23 +353,27 @@ int main() //Used for reading in file, and for selecting the appropriate module
   fstream source;
 
   cout << endl << endl;
-  cout << "   ╔═════════════════════════╗" << endl;
-  cout << "     SERENDIPITY BOOKSELLERS " << endl;
-  cout << "   ╚═════════════════════════╝" << endl << endl;
-  cout << "  dBBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << " BP YBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << "dB   YBb                 YBBBb\n";
-  cout << "dB    YBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << " Yb    YBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << "  Yb    YBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << "   Yb    YBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << "    Yb    YBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << "     Yb    YBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << "      Yb   dBBBBBBBBBBBBBBBBBBBBBBBBb\n";
-  cout << "       Yb dP=======================/\n";
-  cout << "        YbB=======================(\n";
-  cout << "         Ybb=======================\\ "<< endl;
-  cout << "          Y888888888888888888DSI8888b\n";
+  cout << "         ╔═════════════════════════╗         " << endl;
+  cout << "           SERENDIPITY BOOKSELLERS           " << endl;
+  cout << "         ╚═════════════════════════╝         " << endl << endl;
+  cout << "***********************************************\n";
+  cout << "*                                             *\n";
+  cout << "*    dBBBBBBBBBBBBBBBBBBBBBBBBb               *\n";
+  cout << "*   BP YBBBBBBBBBBBBBBBBBBBBBBBb              *\n";
+  cout << "*  dB   YBb                 YBBBb             *\n";
+  cout << "*  dB    YBBBBBBBBBBBBBBBBBBBBBBBb            *\n";
+  cout << "*   Yb    YBBBBBBBBBBBBBBBBBBBBBBBb           *\n";
+  cout << "*    Yb    YBBBBBBBBBBBBBBBBBBBBBBBb          *\n";
+  cout << "*     Yb    YBBBBBBBBBBBBBBBBBBBBBBBb         *\n";
+  cout << "*      Yb    YBBBBBBBBBBBBBBBBBBBBBBBb        *\n";
+  cout << "*       Yb    YBBBBBBBBBBBBBBBBBBBBBBBb       *\n";
+  cout << "*        Yb   dBBBBBBBBBBBBBBBBBBBBBBBBb      *\n";
+  cout << "*         Yb dP=======================/       *\n";
+  cout << "*          YbB=======================(        *\n";
+  cout << "*           Ybb=======================\\       *"<< endl;
+  cout << "*            Y888888888888888888DSI8888b      *\n";
+  cout << "*                                             *\n";
+  cout << "***********************************************\n";
   cout << endl << endl;
 
   source.open(filepath);
@@ -293,7 +412,7 @@ int main() //Used for reading in file, and for selecting the appropriate module
       cashier();
 
     else if(choice==2)
-      inventory();
+      inventory(pink);
 
     else if(choice==3)
       reports(pink); // call report module and pass it the vector with all of the book objects
@@ -338,18 +457,6 @@ book::book(string titlein,string authorin,string publisherin,float ourPriceIs,fl
     n++;
 };
 
-//Add function
-vector<book> book::add(vector<book> starting,int allocate,string titlein,string authorin,string publisherin,float wholesaleIs,float retailIs,float isbnin,date addedin,int quantityin){
-    vector<book> added;
-    book addee(titlein,authorin,publisherin,wholesaleIs,retailIs,isbnin,addedin,quantityin);
-    added = vector<book>(allocate+1);
-    for (int x=0; x<allocate; x++) {
-        added[x]=starting[x];
-    }
-    added[allocate]=addee;
-    return added;
-};
-
 //Save function
 void book::save(vector<book> inventory, int allocate, string path){
     ofstream output;
@@ -367,24 +474,7 @@ void book::save(vector<book> inventory, int allocate, string path){
     output.close();
 };
 
-//Remove function
-vector<book> book::remove(vector<book> inventory, int allocate, int location){
-    book star;
-    for (int x=location; x<allocate-1; x++) {
-        inventory[x]=inventory[x+1];
-    }
-    date removed;removed.day=0;removed.month=0;removed.year=0;
-    inventory[allocate-1].title='\0';
-    inventory[allocate-1].author='\0';
-    inventory[allocate-1].publisher='\0';
-    inventory[allocate-1].ISBN=0;
-    inventory[allocate-1].ourPrice=0;
-    inventory[allocate-1].theirPrice=0;
-    inventory[allocate-1].added=removed;
-    inventory[allocate-1].quantity=0;
-    return inventory;
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 void cashier(vector<book>& pink) //Cashier module
 {
 	fstream receipt;
@@ -507,4 +597,4 @@ void cashier(vector<book>& pink) //Cashier module
 	// cout vector contents AKA receipt part
 	cout << "Your total balance is: " << totalprice << endl;
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
