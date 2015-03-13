@@ -34,7 +34,6 @@ class book
 
     vector<book> read(ifstream &source);
     vector<book> remove(vector<book>, int allocate, int location);
-    void save(vector<book>, int allocate, string path);
 };
 
 int book::n=0; //Intitializes static counter in book class to zero
@@ -77,6 +76,24 @@ void report_message()
   cout << "\nPress any key to continue.\n";
   cin.get();cin.get(); //Mac equivalent of doing "system("Pause")"
 }
+
+void save(vector<book>& inventory, int allocate, string path)
+{
+  ofstream output;
+  output.open(path);
+  output<<allocate<<",,,,,,,"<<endl<<"ISBN,TITLE,AUTHOR,PUBLISHER,Date Added,Quantity On Hand,Wholesale Price,Retail" <<endl;
+  for (int x=0; x<allocate; x++) 
+  {
+    output<<inventory[x].ISBN<<',';
+    output<<inventory[x].title<<',';
+    output<<inventory[x].author<<',';
+    output<<inventory[x].publisher<<',';
+    output<<inventory[x].added.month<<'/'<<inventory[x].added.day<<'/'<<inventory[x].added.year<<',';
+    output<<inventory[x].quantity<<','<<inventory[x].ourPrice<<','<<inventory[x].theirPrice<<endl;
+    
+  }
+    output.close();
+};
 
 void cashier() //Cashier module
 {
@@ -172,7 +189,7 @@ void inventory(vector<book>& pink) //Inventory module
             cout << endl;
             cout << "###############################################\n";
             cout << "# All data relating to said book has been     #\n";
-            cout << "#    removed. Returning to main menu...       #\n";
+            cout << "# removed. (Remember to save your changes.)   #\n";
             cout << "###############################################\n";
             cout << endl; 
             c=0; //Reset counter to zero
@@ -196,10 +213,16 @@ void inventory(vector<book>& pink) //Inventory module
       cout << "# End of list reached. Exiting to main menu...#\n";
       cout << "###############################################\n";
     }
-    else if (choice==3) // Implement save function here
+    else if (choice==4) // Implement save function here
     {
+      cout << "###############################################\n";
+      cout << "# Saving...                                   #\n";
+      save(pink,book::n,filepath); //Saves vectors to file
+      cout << "# Saved!                                      #\n";
+      cout << "###############################################\n";
+      cout << endl;
     }
-    else if (choice==4) // Implement search and editing of vectors here
+    else if (choice==3) // Implement search and editing of vectors here
     {
     }
     else if (choice==5) // Quits inventory module
@@ -455,23 +478,6 @@ book::book(string titlein,string authorin,string publisherin,float ourPriceIs,fl
     added=addedin;
     quantity+=quantityin;
     n++;
-};
-
-//Save function
-void book::save(vector<book> inventory, int allocate, string path){
-    ofstream output;
-    output.open(path);
-            output<<allocate<<",,,,,,,"<<endl<<"ISBN,TITLE,AUTHOR,PUBLISHER,Date Added,Quantity On Hand,Wholesale Price,Retail" <<endl;
-    for (int x=0; x<allocate; x++) {
-
-        output<<inventory[x].ISBN<<',';
-        output<<inventory[x].title<<',';
-        output<<inventory[x].author<<',';
-        output<<inventory[x].publisher<<',';
-        output<<inventory[x].added.month<<'/'<<inventory[x].added.day<<'/'<<inventory[x].added.year<<',';
-        output<<inventory[x].quantity<<','<<inventory[x].ourPrice<<','<<inventory[x].theirPrice<<endl;
-    }
-    output.close();
 };
 
 /*
