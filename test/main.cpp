@@ -4,6 +4,7 @@
 
 #include<iostream>
 #include<iomanip>
+#include<cstdlib>
 #include<fstream>
 #include<string> // Needed for string operations
 #include<vector> // Needed for vectors
@@ -13,8 +14,6 @@
 #include"sorting.h"
 
 using namespace std;
-
-string filepath="Inventory.csv";
 
 void report_message()
 {
@@ -29,15 +28,357 @@ void report_message()
   cin.get();cin.get(); //Mac equivalent of doing "system("Pause")"
 }
 
-void cashier() //Cashier module
+void regret_message()
 {
+  cout << endl;
+  cout << "###############################################\n";
+  cout << "# We are sorry, we do not have your book in   #\n"; 
+  cout << "# our selection. Returning to main menu...    #\n";
+  cout << "###############################################\n";
+}
+
+string myToLower (string inStr) // Converts the Caps in the Input String to lower case quivalent, made by Abdollah
+{
+  char c; // The character to be examined
+  string outStr = ""; // The resulting string
+  for (int i=0 ; i<inStr.size() ; i++)  // Examining all characters
+  {
+    c = inStr[i]; // The character to be examined
+    if (c >= 'A' && c <= 'Z') c = tolower(c);	// It is an Uppercase -> Convert to Lowercase equivalent
+    outStr = outStr + c;  // Append to resulting string (either original or converted char)
+  }
+  return outStr;	// Result: The input string with all Uppercase chars converted to Lowercase.
+}
+
+int toInteger (string inStr, bool& isNumber)
+  // Qualifies the Input String for being an Integer and returns the equivalent integer, made by Abdollah
+{											
+  char c; // The character to be examined
+  int srchNumber = 0; // The final result, if all characters are numerals.
+  isNumber = true; // Default: the input has all numerals
+
+  for (int i=0 ; i < inStr.size() ; i++)  // Examining all characters
+  {
+    c = inStr[i];
+    // check if the srchStr represents a Number
+    if (isNumber && c >= '0' && c <= '9')   // The character is a numeral and all previous ones, too.
+      srchNumber = srchNumber * 10 + (static_cast<int>(c)-48); // Calculate resulting Integer.
+    else
+      isNumber = false;	// At least one character has been determined as non-digit.
+  }									
+  return srchNumber;						// Result: if isNumber is True, the calculated Integer is returned.
+}
+
+void schBks(vector<book>& inventory, int fndItems[], int& retCount, string srchStr) // Search function, made by Abdollah
+{
+  // The Search performs both Numeric and String checks 
+  bool isNumeric = false; // Shows whether the Search String srchStr is all digits
+  string noCapsStr = myToLower(srchStr);  // Is the input srchStr with all Caps converted to lower chars
+  int srchNumber = toInteger(srchStr, isNumeric); // Check if the input is also an Integer by calling toInteger
+  bool indexFound; // Checks if the srchStr has been found among string fields of Book
+  int fndCount = 0;
+  for (int index=0 ; index<inventory.size() ; index++)	// Examining all books in the inventory vector
+  {
+    indexFound = false;	
+    if (myToLower(inventory[index].title).find(noCapsStr) < myToLower(inventory[index].title).size() ||
+    	myToLower(inventory[index].author).find(noCapsStr) < myToLower(inventory[index].author).size() ||
+	myToLower(inventory[index].publisher).find(noCapsStr) < myToLower(inventory[index].publisher).size())
+	{
+          indexFound = true; 
+          /*
+           * When the srchStr is found, the indexFound flag is set, the number of found books is incremented,
+           * and the index number of the book info in inventory vector is added to the found items array (fndItems[]).
+           */
+          fndCount++;
+          fndItems[fndCount-1] = index;	
+        }
+    /*
+     *If srchStr is not found among string fields and it is a number, and is equal to ISBN, or year of added date, 
+     * or month of added date, or day of added date, or integer part of ourPrice, or integer part of theirPrice.
+     */
+    if((!indexFound && isNumeric && inventory[index].added.year == srchNumber)||
+      (!indexFound && isNumeric && inventory[index].added.month == srchNumber)||
+      (!indexFound && isNumeric && inventory[index].added.day == srchNumber)||
+      (!indexFound && isNumeric && int(inventory[index].ourPrice) == srchNumber)||
+      (!indexFound && isNumeric && int(inventory[index].theirPrice) == srchNumber))
+      {
+        /*
+         * This time, the srchStr number was found -> the indexFound flag is 
+         * the number of found books is incremented, and the index number of 
+         * the book info in the inventory vector is added the the found items
+         * array (fndItems[]).
+         */
+	 indexFound = true;							
+         fndCount++;
+	 fndItems[fndCount-1] = index;		
+      }	
+  }
+  retCount = fndCount; // Result: the fndCount is passed to retCount by reference.
+}
+
+void cashier(vector<book>& pink) //Cashier module
+{
+  int titlecounter=0;
+  int p_quantity=0;
+  float total_price=0;
+  string isbnchoice;
+  int checkoutcounter=0;
+  int choice;
+  string titlechoice, authorchoice, cochoice, rec_choice;
+  string titlelist[100];
+  vector<book> magenta(100); //specialized vector specifically for cashier recepit
+  do
+  {
+    cout << endl;
+    cout << "     Welcome to the Cash Register Module!     " << endl;
+    cout << "         Please look at the menu below:       " << endl; 
+    cout << "###############################################\n";
+    cout << "# 1: Purchase a book by Title                 #\n";
+    cout << "# 2: Purchase a book by ISBN                  #\n";
+    cout << "# 3: View Checkout Cart                       #\n";
+    cout << "# 4: View Receipt                             #\n";
+    cout << "#                                             #\n";
+    cout << "# 7: Return to Main Menu                      #\n";
+    cout << "###############################################\n";
+    cin >> choice;
+    cout << endl;
+    // Title Searching
+    if (choice == 1)
+    {
+      bool exists = false;
+      cout << "###############################################\n";
+      cout << "# Enter title below: (case-sensitive)         #\n"; 
+      cout << "# (i.e. enter 'LOLITA', not 'lOlItA')         #\n"; 
+      cout << "###############################################\n";
+      cin.ignore();
+      getline(cin,titlechoice);
+      for (int a = 0; a < book::n; a++)
+      {
+	if (titlechoice == pink[a].title) 
+        {
+          exists = true;
+          break;
+        }
+	titlecounter++;
+      }
+
+      if (exists == true)
+      {
+        if (pink[titlecounter].quantity>0) //If there are any books in our inventory at all
+        {
+          cout << endl;
+          cout << "###############################################\n";
+          cout << "# We are pleased to have your book in stock.  #\n";
+          cout << "# Would you like to add a copy to your cart?  #\n";
+          cout << "# ('Y' for yes; any other key to exit to menu)#\n";
+          cout << "###############################################\n";
+          cout << "Note: There are only " << pink[titlecounter].quantity << " copies left.\n";
+          cout << endl;
+	  cin >> cochoice;
+	  if (cochoice == "Y")
+	  {
+            cout << endl;
+            cout << "###############################################\n"; 
+            cout << "# NOTE: Each copy is $" << pink[titlecounter].theirPrice << ", plus tax.           #\n"; 
+            cout << "# Enter in the amount of copies desired.      #\n";
+            cout << "###############################################\n";
+	    cin >> p_quantity;
+            if (pink[titlecounter].quantity>=p_quantity)
+            {
+	      pink[titlecounter].quantity = pink[titlecounter].quantity - p_quantity;
+	      total_price += (pink[titlecounter].theirPrice * p_quantity ); 
+
+	      // add book into vector then read them out.
+              
+              magenta[checkoutcounter].ISBN=pink[titlecounter].ISBN;
+              magenta[checkoutcounter].quantity = p_quantity;
+              magenta[checkoutcounter].title=pink[titlecounter].title;
+              magenta[checkoutcounter].theirPrice=pink[titlecounter].theirPrice;
+	      checkoutcounter++;
+
+              cout << endl;
+              cout << "###############################################\n"; 
+              cout << "# Books added. For subtotal, view cart.       #\n";
+              cout << "# Returning to main menu...                   #\n";
+              cout << "###############################################\n" << endl;
+            }
+            else
+            {
+              cout << endl;
+              cout << "###############################################\n"; 
+              cout << "# Invalid amount selected. Restarting...      #\n";
+              cout << "###############################################\n"; 
+            }
+	  }
+          else
+          {
+            cout << endl;
+            cout << "###############################################\n"; 
+            cout << "# No books added. Returning to main menu...   #\n";
+            cout << "###############################################\n"; 
+          }
+        }
+        else
+          regret_message();
+      }
+      else  
+      {
+       regret_message(); 
+      }
+      titlecounter=0;
+    }
+      // ISBN Searching
+    if (choice == 2)
+    {
+      bool exists = false;
+      cout << "###############################################\n";
+      cout << "# Enter ISBN of book below: (without dashes)  #\n";
+      cout << "###############################################\n";
+      cin >> isbnchoice;
+
+      for (int a = 0; a < book::n; a++)
+      {
+	if (isbnchoice == pink[a].ISBN) 
+        {
+          exists = true;
+          break;
+        }
+        titlecounter++;
+      }
+
+      if (exists == true)
+      {
+        if (pink[titlecounter].quantity>0) //If there are any books in our inventory at all
+        {
+          cout << endl;
+          cout << "###############################################\n";
+          cout << "# We are pleased to have your book in stock.  #\n";
+          cout << "# Would you like to add a copy to your cart?  #\n";
+          cout << "# ('Y' for yes; any other key to exit to menu)#\n";
+          cout << "###############################################\n";
+          cout << "Note: There are only " << pink[titlecounter].quantity << " copies left.\n";
+          cout << endl;
+	  cin >> cochoice;
+	  if (cochoice == "Y")
+	  {
+            cout << endl;
+            cout << "###############################################\n"; 
+            cout << "# NOTE: Each copy is $" << pink[titlecounter].theirPrice << ", plus tax.           #\n"; 
+            cout << "# Enter in the amount of copies desired.      #\n";
+            cout << "###############################################\n";
+	    cin >> p_quantity;
+            if (pink[titlecounter].quantity>=p_quantity)
+            {
+	      pink[titlecounter].quantity = pink[titlecounter].quantity - p_quantity;
+	      total_price += (pink[titlecounter].theirPrice * p_quantity); // Sales tax is 7.5% 
+	      // add book into vector then read them out.
+	      //titlelist[checkoutcounter] = pink[titlecounter].title;
+              
+              magenta[checkoutcounter].quantity = p_quantity;
+              magenta[checkoutcounter].ISBN=pink[titlecounter].ISBN;
+              magenta[checkoutcounter].title=pink[titlecounter].title;
+              magenta[checkoutcounter].theirPrice=pink[titlecounter].theirPrice;
+	      checkoutcounter++;
+
+              cout << endl;
+              cout << "###############################################\n"; 
+              cout << "# Books added. For subtotal, view cart.       #\n";
+              cout << "# Returning to main menu...                   #\n";
+              cout << "###############################################\n" << endl;
+            }
+            else
+            {
+              cout << endl;
+              cout << "###############################################\n"; 
+              cout << "# Invalid amount selected. Restarting...      #\n";
+              cout << "###############################################\n"; 
+            }
+	  }
+          else
+          {
+            cout << endl;
+            cout << "###############################################\n"; 
+            cout << "# No books added. Returning to main menu...   #\n";
+            cout << "###############################################\n"; 
+          }
+        }
+        else
+          regret_message();
+      }
+      else  
+      {
+       regret_message(); 
+      }
+      titlecounter=0;
+    }
+
+    if (choice == 3) //View cart
+    {
+      system("date");
+      cout << endl;
+      for (int i = 0; i < checkoutcounter; i++)
+      {
+        cout << "************************************************\n";
+        cout << "Quantity: \t" << magenta[i].quantity << endl;
+        cout << "  ISBN: \t" << magenta[i].ISBN << endl;
+        cout << " Title: \t" << magenta[i].title << endl;
+        cout << " Price: \t$" << magenta[i].theirPrice << endl;
+        cout << "************************************************\n";
+        cout << endl;
+      }
+	
+      cout << "************************************************\n";
+      cout << "SUBTOTAL: \t$" << total_price << endl;
+      cout << "TAX: \t\t$" << total_price * 0.075 << endl;
+      cout << "TOTAL: \t\t$" << total_price * 1.075 << endl;
+      cout << "************************************************\n";
+      cout << endl;
+      cout << "###############################################\n";
+      cout << "# Would you like a receipt?                   #\n";
+      cout << "# ('Y' for yes; any other key for no.)        #\n";
+      cout << "###############################################\n";
+      cin >> rec_choice;
+      if (rec_choice=="Y")
+      {
+        ofstream redtails;
+        redtails.open("receipt.txt");
+        for (int j = 0; j < checkoutcounter; j++)
+        {
+          redtails << "************************************************\n";
+          redtails << "Quantity: \t" << magenta[j].quantity << endl;
+          redtails << "  ISBN: \t" << magenta[j].ISBN << endl;
+          redtails << " Title: \t" << magenta[j].title << endl;
+          redtails << " Price: \t$" << magenta[j].theirPrice << endl;
+          redtails << "************************************************\n";
+          redtails << endl;
+        }
+	
+        redtails << "************************************************\n";
+        redtails << "SUBTOTAL: \t$" << total_price << endl;
+        redtails << "TAX: \t\t$" << total_price * 0.075 << endl;
+        redtails << "TOTAL: \t\t$" << total_price * 1.075 << endl;
+        redtails << "************************************************\n";
+        redtails.close();
+      }
+      else
+      {
+        cout << endl;
+        cout << "###############################################\n";
+        cout << "# Returning to main menu...                   #\n";
+        cout << "###############################################\n";
+      }
+    }
+    if (choice == 4)
+      system("open receipt.txt");
+
+  } while (choice != 7);
 }
 
 void inventory(vector<book>& pink) //Inventory module
 {
   int choice, book_to_delete,c=0;
   char choice_2;
-  string choice_3;
+  string choice_3, savepath;
   while (1)
   {
     cout << endl;
@@ -48,7 +389,8 @@ void inventory(vector<book>& pink) //Inventory module
     cout << "# 2: Remove a book                            #\n";
     cout << "# 3: Edit a book                              #\n";
     cout << "# 4: Save current inventory to disk           #\n";
-    cout << "# 5: Return to Main Menu                      #\n";
+    cout << "#                                             #\n";
+    cout << "# 7: Return to Main Menu                      #\n";
     cout << "###############################################\n";
     cin >> choice;
     cout << endl;
@@ -56,7 +398,8 @@ void inventory(vector<book>& pink) //Inventory module
     if (choice==1) //Adding a book
     {
       string title,author,publisher;
-      int ISBN,quantity;
+      string ISBN;
+      int quantity;
       date added;
       float ourPrice,theirPrice;
       
@@ -67,10 +410,10 @@ void inventory(vector<book>& pink) //Inventory module
       cout << "# (currency value. i.e. when prompted for     #\n";
       cout << "# (price, enter 5, not $5.)                   #\n";
       cout << "###############################################\n" << endl;
-      cout << "ISBN: ";
+      cout << "ISBN (without dashes): ";
       cin >> ISBN;
       cout << "Title: ";
-      getline(cin,title);
+      cin.ignore();
       getline(cin,title); 
       //These two getlines are not a typo; odd problems were encountered if I only used one
       cout << "Author: ";
@@ -85,9 +428,9 @@ void inventory(vector<book>& pink) //Inventory module
       cin >> theirPrice;
       cout << "Year added to inventory: ";
       cin >> added.year;
-      cout << "Month added to inventory: ";
+      cout << "Month added to inventory (as digits): ";
       cin >> added.month;
-      cout << "Day added to inventory: ";
+      cout << "Day added to inventory (as digits): ";
       cin >> added.day;
 
       //Creating new book object with the above info
@@ -158,16 +501,151 @@ void inventory(vector<book>& pink) //Inventory module
     else if (choice==4) // Implement save function here
     {
       cout << "###############################################\n";
+      cout << "# Enter in the filename and or filepath for   #\n";
+      cout << "# the updated inventory. Your current direct- #\n";
+      cout << "#-ory is shown for convienence. (To overwrite #\n";
+      cout << "# the original file, type 'Inventory.csv')    #\n"; 
+      cout << "###############################################\n";
+      cout << endl;
+      system("ls");
+      cout << endl;
+      cin >> savepath;
+      cout << endl;
+      cout << "###############################################\n";
       cout << "# Saving...                                   #\n";
-      save(pink,book::n,filepath); //Saves vectors to file
+      save(pink,book::n,savepath); //Saves vectors to file
+      system("afplay start_save.mp3");
       cout << "# Saved!                                      #\n";
+      system("afplay save.mp3");
       cout << "###############################################\n";
       cout << endl;
     }
-    else if (choice==3) // Implement search and editing of vectors here
+    else if (choice == 3) // Implement Search & Editing functions here
     {
+      string schItem = "";	// Base item for Identity to Search in a book's info
+      int itmsFndArr[200];	// Array to show and index for a book with schItem in any of its fields
+      int bksFnd = 0;		// Number of Books with schItem in their fields
+      int editItemNo;		// The selected item for Editing
+      char editField;	        // The field (item) to be amended
+      system("clear");
+      cout << "###############################################\n";
+      cout << "# Enter in your search term below.            #\n";
+      cout << "# The term can be an ISBN, title, author,     #\n";
+      cout << "# quantity in the inventory, date added to    #\n";
+      cout << "# inventory, or the price of the book.        #\n";
+      cout << "###############################################\n";
+      cout << endl;
+      getline(cin, schItem); // to ignore the previous line
+      getline(cin, schItem);
+      schBks(pink, itmsFndArr, bksFnd, schItem);
+      if (bksFnd > 0)
+      {
+        for (int i = 0; i < bksFnd; i++)
+      	{
+	  cout << "\n" << i+1 << ". \n";
+	  displayBook(pink[itmsFndArr[i]]);
+	}
+	cout << endl;
+
+        try
+        {
+          if (bksFnd==1)
+            cout << bksFnd << " book was located.\n\n";
+          else if (bksFnd>1)
+            cout << bksFnd << " books were located.\n\n";
+          else if (bksFnd<0)
+            throw 30;
+        }
+
+        catch (int q)
+        {
+          cout << "###############################################\n";
+          cout << "#                                             #\n";
+          cout << "# Sorry, no book was found! Returning to menu.#\n";
+          cout << "#                                             #\n";
+          cout << "###############################################\n";
+        }
+
+        cout << endl;
+        cout << "###############################################\n";
+	cout << "# Please enter the book number of your choice #\n";
+        cout << "# for editing.                                #\n";
+        cout << "###############################################\n";
+	cin >> editItemNo;
+	while (editItemNo < 1 || editItemNo > bksFnd)
+	{
+	  cout << "Oops! Please enter a number between 1 and " << bksFnd << ": \n\n" ;
+	  cin >> editItemNo;
+	}
+	editItemNo = itmsFndArr[editItemNo-1];
+	system("clear");
+	cout << "The Book to edit:\n"
+	<< "-----------------\n";
+	displayItmzBook(pink[editItemNo]);
+	editField = 'a';
+	while (editField >= 'a' && editField <= 'h' )
+	{
+	  cout << "\nPlease enter item to be amended (a to h)\n"
+	  << "To exit Edit Mode enter any other character: " << endl;
+	  cin >> editField;
+	  switch (editField)
+	  {
+	    case 'a':
+	      cout << "Please enter the new ISBN: ";	// ISBN
+	      cin >> pink[editItemNo].ISBN;
+	      break;
+	    case 'b':
+	      cout << "Please enter the new Title: \n";	// Title
+	      getline(cin, schItem); // To Read the complete line I need this IGNORE line!
+	      getline(cin, pink[editItemNo].title);
+	      break;
+	    case 'c':
+	      cout << "Please enter the new Author: \n";		// Author
+	      getline(cin, schItem); // To Read the complete line I need this IGNORE line!
+	      getline(cin, pink[editItemNo].author);
+	      break;
+	    case 'd':
+	      cout << "Please enter the new Publisher: \n";	// Publisher
+	      getline(cin, schItem); // To Read the complete line I need this IGNORE line!
+	      getline(cin, pink[editItemNo].publisher);
+	      break;
+	    case 'e':
+	      cout << "Please enter the new Quantity: ";	// Quantity
+	      cin >> pink[editItemNo].quantity;
+	      break;
+	    case 'f':
+	      cout << "Please enter the new Wholesale Price: ";	// Wholesale Price
+	      cin >> pink[editItemNo].ourPrice;
+	      break;
+	    case 'g':
+	      cout << "Please enter the new Retail Price: ";	// Retail Price
+	      cin >> pink[editItemNo].theirPrice;
+	      break;
+	    case 'h':
+	      cout << "Please enter the new Date Added to Inventory: \n";	// Date Added to Inventory
+	      cout << "Year: ";
+	      cin >> pink[editItemNo].added.year; // Year
+	      cout << "Month: ";
+	      cin >> pink[editItemNo].added.month; // Month
+	      cout << "Day: ";
+	      cin >> pink[editItemNo].added.day; // Day
+	      break;
+           }
+         }
+	 cout << "\nThe Book after editing:\n";
+	 cout << "-----------------------\n";
+	 displayBook(pink[editItemNo]);
+       }
+       else
+       {
+         cout << endl;
+         cout << "###############################################\n";
+         cout << "# Sorry, no book was found! Returning to menu.#\n";
+         cout << "###############################################\n";
+       }
     }
-    else if (choice==5) // Quits inventory module
+
+    else if (choice==7) // Quits inventory module
       break;
     else
     {
@@ -192,6 +670,7 @@ void reports(vector<book>& pink) // Report module
 
   while(1)
   {
+    cout << endl;
     cout << "\n        Welcome to the report module.\n";
     cout << "What kind of report would you like to generate?\n";
     cout << "###############################################\n";
@@ -199,7 +678,8 @@ void reports(vector<book>& pink) // Report module
     cout << "# 2: Sort and list by Quantity                #\n";
     cout << "# 3: Sort and list by Cost                    #\n";
     cout << "# 4: Sort and list by Age                     #\n";
-    cout << "# 5: Return to Main Menu                      #\n";
+    cout << "#                                             #\n";
+    cout << "# 7: Return to Main Menu                      #\n";
     cout << "###############################################\n";
     cin >> choice;
     cout << endl;
@@ -207,6 +687,9 @@ void reports(vector<book>& pink) // Report module
     if (choice==1) // list
     {
       report_message();
+      system("clear");
+      cout << "Press enter to step through each book.\n";
+      cout << endl;
       for (int a=0; a<book::n; a++)
       {
         cout << "ISBN        :   " << pink[a].ISBN << endl;
@@ -220,11 +703,11 @@ void reports(vector<book>& pink) // Report module
         cout << pink[a].added.year << endl;
         cout << endl;
         cout << "###############################################\n";
-        cout << endl;
 
         //Keep running totals of wholesale and retail prices for the report
         total_wholesale+=pink[a].ourPrice; 
         total_retail+=pink[a].theirPrice;
+        getchar();
       }
       cout << "###############################################\n";
       cout << "TOTAL WHOLESALE VALUE  :  $" << total_wholesale << endl;
@@ -237,6 +720,7 @@ void reports(vector<book>& pink) // Report module
     else if (choice==2) // quantity
     {
       report_message();
+      system("clear");
       cout << "Press enter to step through each book.\n";
       cout << endl;
       sort(pink.begin(),pink.end(),sortByQuantity); //sorts vector by quantity
@@ -260,6 +744,8 @@ void reports(vector<book>& pink) // Report module
 
     else if (choice==3) // cost
     {
+      report_message();
+      system("clear");
       cout << "Press enter to step through each book.\n";
       cout << endl;
       sort(pink.begin(),pink.end(),sortByCost); //sorts vector by cost
@@ -282,6 +768,8 @@ void reports(vector<book>& pink) // Report module
     }
     else if (choice==4) // sorts vector by date
     {
+      report_message();
+      system("clear");
       cout << "Press enter to step through each book.\n";
       cout << endl;
       sort(pink.begin(),pink.end(),sortByAge);
@@ -302,7 +790,7 @@ void reports(vector<book>& pink) // Report module
         getchar();
       }
     }
-    else if (choice==5)
+    else if (choice==7)
       break;
     else
     {
@@ -317,17 +805,17 @@ void reports(vector<book>& pink) // Report module
   }
 }
 
-
 int main() //Used for reading in file, and for selecting the appropriate module
 {
-  string titlein,authorin,publisherin;
-  int monthhold,dayhold,yearhold,ISBNin,quantityin,choice,return_value;
+  string titlein,authorin,publisherin,filepath,ISBNin;
+  int monthhold,dayhold,yearhold,quantityin,choice,return_value;
   float ourprice,theirprice;
   date addedin;
   int allocate; //for reading in from file
   char throwaway;
   fstream source;
 
+  system("clear");
   cout << endl << endl;
   cout << "         ╔═════════════════════════╗         " << endl;
   cout << "           SERENDIPITY BOOKSELLERS           " << endl;
@@ -352,6 +840,23 @@ int main() //Used for reading in file, and for selecting the appropriate module
   cout << "***********************************************\n";
   cout << endl << endl;
 
+  system("afplay start.mp3"); //Only on Macs
+
+  cout << "###############################################\n";
+  cout << "# Enter the location of the inventory csv.    #\n";
+  cout << "# By default, the file is stored in the same  #\n";
+  cout << "# directory as this program, and should be    #\n";
+  cout << "# titled 'Inventory.csv'. If you're using a   #\n";
+  cout << "# csv file, specifiy the name and or filepath.#\n";
+  cout << "# A listing of your current working directory #\n";
+  cout << "# has been provided for your convenience.     #\n";
+  cout << "###############################################\n";
+  cout << endl;
+  system("ls");
+  cout << endl;
+  cin >> filepath;
+  system("clear");
+
   source.open(filepath);
   source>>allocate;
   getline(source, titlein);
@@ -360,29 +865,32 @@ int main() //Used for reading in file, and for selecting the appropriate module
   
   for (int x=0; x<allocate; x++) 
   {
-    source>>pink[x].ISBN;
-    source>>throwaway;
+    getline(source, pink[x].ISBN, ',');
     getline(source, pink[x].title, ',');
     getline(source, pink[x].author, ',');
     getline(source, pink[x].publisher, ',');
     source>>pink[x].added.month>>throwaway>>pink[x].added.day>>throwaway>>pink[x].added.year>>throwaway;
     source>>pink[x].quantity>>throwaway>>pink[x].ourPrice>>throwaway>>pink[x].theirPrice;
+    remove_if(pink[x].ISBN.begin(), pink[x].ISBN.end(), ::isspace);
   }
 
   while(1)
   {
+    try
+    {
     cout << "     Which module would you like to load?\n";
     cout << "###############################################\n";
     cout << "# 1: Cashier Module                           #\n";
     cout << "# 2: Inventory Module                         #\n";
     cout << "# 3: Report Module                            #\n";
-    cout << "# 4: Exit                                     #\n";
-    cout << "# 5: Credits                                  #\n";
+    cout << "# 4: Credits                                  #\n";
+    cout << "#                                             #\n";
+    cout << "# 8: Exit                                     #\n";
     cout << "###############################################\n";
     cin >> choice;
 
     if(choice==1)
-      cashier();
+      cashier(pink);
 
     else if(choice==2)
       inventory(pink);
@@ -390,7 +898,7 @@ int main() //Used for reading in file, and for selecting the appropriate module
     else if(choice==3)
       reports(pink); // call report module and pass it the vector with all of the book objects
 
-    else if(choice==4)
+    else if(choice==8)
     {
       cout << endl << "###############################################\n";
       cout << "# Thank you for using the ARiA business suite.#\n";
@@ -399,24 +907,14 @@ int main() //Used for reading in file, and for selecting the appropriate module
       cout << "# sent to customer_service@chrysanthemum.org  #\n";
       cout << "#                                             #\n";
       cout << "###############################################\n" << endl;
+      system("afplay end.mp3"); //Only on Macs
       break;
     }
 
-    else if(choice==5)
+    else if(choice==4)
     {
-      cout << endl;
-      cout << "###############################################\n";
-      cout << "# Software title: ARiA Business Suite         #\n";
-      cout << "#                                             #\n";
-      cout << "# Publisher: Chrysanthemum Industries, 2015   #\n";
-      cout << "#                                             #\n";
-      cout << "# Developers: Roark Burney, Zachary Prince,   #\n";
-      cout << "#             Chris Yu, Abdollah Kasraie      #\n";
-      cout << "#                                             #\n";
-      cout << "# ASCII art made by unknown patron of the     #\n";
-      cout << "# internet.                                   #\n";
-      cout << "###############################################\n";
-      cout << endl << "***********************************************\n";
+      system("clear");
+      cout << "***********************************************\n";
       cout << "*                                             *\n";
       cout << "*            ARiA copyrighted 2015            *\n";
       cout << "*           Chrysanthemum Industries          *\n"; 
@@ -438,141 +936,43 @@ int main() //Used for reading in file, and for selecting the appropriate module
       cout << "*                  \\:'   `:/                  *" << endl;
       cout << "*                                             *\n";
       cout << "***********************************************\n";
-      cout << endl << endl;
+      cout << endl;
       cout << "(Press any key to continue.)\n\n";
       cin.get();cin.get();
+      system("clear");
+      cout << "###############################################\n";
+      cout << "# Software title: ARiA Business Suite         #\n";
+      cout << "#                                             #\n";
+      cout << "# Publisher: Chrysanthemum Industries, 2015   #\n";
+      cout << "#                                             #\n";
+      cout << "# Developers: Roark Burney, Zachary Prince,   #\n";
+      cout << "#             Chris Yu, Abdollah Kasraie      #\n";
+      cout << "#                                             #\n";
+      cout << "# ASCII art made by unknown patron of the     #\n";
+      cout << "# internet.                                   #\n";
+      cout << "#                                             #\n";
+      cout << "# All sound effects are from the various      #\n";
+      cout << "# Windows operating systems. As such,         #\n";
+      cout << "# Chrysanthemum Industries does not own them. #\n";
+      cout << "###############################################\n";
+
+      cout << endl << endl;
+      cout << "(Press any key to continue.)\n\n";
+      cin.get();
       continue;
     }
 
-    else 
+    else
+      throw 'A';
+    } // end try block
+    catch (char a)
     {
-      cout << "Invalid choice. Restarting...\n\n";
-      continue;
+      cout << endl;
+      cout << "###############################################\n";
+      cout << "# Exception occurred. Most likely the result  #\n";
+      cout << "# of an incorrect number choice. Restarting...#\n";
+      cout << "###############################################\n";
+      cout << endl;
     }
   }
 }
-
-/*
-void cashier(vector<book>& pink) //Cashier module
-{
-	fstream receipt;
-	int choice, titlecounter, pquantity, totalprice;
-	int checkoutcounter = 0;
-	string titlechoice, authorchoice, cochoice;
-	int isbnchoice;
-
-	do
-	{
-		cout << "Welcome to the Cash Register Module!" << endl;
-		cout << "Please look at the Menu Below" << endl << endl;
-		cout << "###############################################\n";
-		cout << "# 1: Purchase a book by Title                 #\n";
-		cout << "# 2: Purchase a book by ISBN                  #\n";
-		cout << "# 3: Purchase a book by Author(WIP)           *\n";
-		cout << "# 4: Return to Main Menu                      #\n";
-		cout << "###############################################\n";
-		cin >> choice;
-		cout << endl;
-		// Title Searching
-		if (choice == 1)
-		{
-			bool exists = false;
-
-			cout << "Please Input the title of the book you want" << endl;
-			cin >> titlechoice;
-			
-				for (int a = 0; a < book::n; a++)
-				{
-					titlecounter++;
-					if (titlechoice == pink[a].title) exists = true;
-				}
-				if (exists = true)
-				{
-					cout << "We are pleased to have your book in our selection" << endl;
-					cout << "Would you like to add the book to Check out? (Y or N)" << endl;
-					cin >> cochoice;
-					if (cochoice == "y")
-					{
-						checkoutcounter++;
-						//reduce pink[titlecounter].quantity by integer. ///////////////WIP//////////////////////
-						cout << "How many copies would you like to buy? " << endl;
-						cin >> pquantity;
-						pink[titlecounter].quantity = pink[titlecounter].quantity - pquantity;
-						totalprice += pink[titlecounter].theirPrice * pquantity;
-						// add book into vector then read them out.
-						cochoice = "n";
-					}
-				}
-			else cout << "We are sorry, we do not have your book in our selection. " << endl;
-		}
-		// ISBN Searching
-		if (choice == 2)
-		{
-			bool exists = false;
-
-			cout << "Please Input the ISBN of the book you want" << endl;
-			cin >> isbnchoice;
-
-			for (int a = 0; a < book::n; a++)
-			{
-				titlecounter++;
-				if (isbnchoice == pink[a].ISBN) exists = true;
-			}
-			if (exists = true)
-			{
-				cout << "We are pleased to have your book in our selection" << endl;
-				cout << "Would you like to add the book to Check out? (Y or N)" << endl;
-				cin >> cochoice;
-				if (cochoice == "y")
-				{
-					checkoutcounter++;
-					//reduce pink[titlecounter].quantity by integer.
-					cout << "How many copies would you like to buy? " << endl;
-					cin >> pquantity;
-					pink[titlecounter].quantity = pink[titlecounter].quantity - pquantity;
-					totalprice += pink[titlecounter].theirPrice * pquantity;
-					// add book into vector then read them out.
-					cochoice = "n";
-				}
-			}
-			else cout << "We are sorry, we do not have your book in our selection. " << endl;
-		}
-		// Author Search
-		if (choice == 3)
-		{
-			bool exists = false;
-
-			cout << "Please Input the Author of the book you want" << endl;
-			cin >> authorchoice;
-
-			for (int a = 0; a < book::n; a++)
-			{
-				titlecounter++;
-				if (authorchoice == pink[a].author) exists = true;
-			}
-			if (exists = true)
-			{
-				cout << "We are pleased to have your book in our selection" << endl;
-				cout << "Would you like to add the book to Check out? (Y or N)" << endl;
-				cin >> cochoice;
-				if (cochoice == "y")
-				{
-					checkoutcounter++;
-					//reduce pink[titlecounter].quantity by integer.
-					cout << "How many copies would you like to buy? " << endl;
-					cin >> pquantity;
-					pink[titlecounter].quantity = pink[titlecounter].quantity - pquantity;
-					totalprice += pink[titlecounter].theirPrice * pquantity;
-					// add book into vector then read them out.
-					cochoice = "n";
-				}
-			}
-			else cout << "We are sorry, we do not have your book in our selection. " << endl;
-		}
-
-	} while (choice != 4);
-
-	// cout vector contents AKA receipt part
-	cout << "Your total balance is: " << totalprice << endl;
-}
-*/
