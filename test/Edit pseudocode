@@ -1,0 +1,28 @@
+{
+	prompt the user for a search string
+	call search function: 
+	  {
+      convert all uppercase characters in search string to lowercase equivalent
+      find the equivalent integer of search string (if applicable)
+	    for all books in the inventory:
+		    { 
+			    check if the converted search string exists in the converted strings in title, author, or publisher
+			    if found
+				    add index of the book object in inventory to the array of found books
+			    else
+				    check if the numeric form of search string matches any of the numeric values 
+					         (ISBN, year, month, day, or integer parts of prices)
+				    if found
+					    add index of the book object in inventory to the array of found books
+	      }
+	    show all books that meet the search criteria
+	    prompt the user to choose the desired book for editing
+	    accept the item number of the book
+	      {
+		      show the details of the book in an itemized format
+		      prompt the user to choose any fields for editing
+		      accept the new information for each field and update
+		      show all details with updated information
+	      }
+	    return to Edit menu
+}
