@@ -1,0 +1,30 @@
+﻿Build started 3/18/2015 9:01:12 PM.
+     1>Project "C:\Users\EMALINE-SKYCE\documents\visual studio 2012\Projects\Project\Project\Project.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
+         Source.cpp
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(38): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(54): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(74): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(203): warning C4244: '+=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(275): warning C4244: '+=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(968): warning C4129: ' ' : unrecognized character escape sequence
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(969): warning C4129: ':' : unrecognized character escape sequence
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(806): warning C4101: 'ourprice' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(806): warning C4101: 'theirprice' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(805): warning C4101: 'yearhold' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(805): warning C4101: 'monthhold' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(805): warning C4101: 'quantityin' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(805): warning C4101: 'return_value' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(807): warning C4101: 'addedin' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(805): warning C4101: 'dayhold' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(1024): warning C4101: 'a' : unreferenced local variable
+     1>c:\users\emaline-skyce\documents\visual studio 2012\projects\project\project\source.cpp(1040): warning C4101: 'b' : unreferenced local variable
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\EMALINE-SKYCE\documents\visual studio 2012\Projects\Project\Debug\Project.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\EMALINE-SKYCE\documents\visual studio 2012\Projects\Project\Debug\Project.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\EMALINE-SKYCE\documents\visual studio 2012\Projects\Project\Debug\Project.lib" /MACHINE:X86 Debug\Source.obj
+         Project.vcxproj -> C:\Users\EMALINE-SKYCE\documents\visual studio 2012\Projects\Project\Debug\Project.exe
+     1>Done Building Project "C:\Users\EMALINE-SKYCE\documents\visual studio 2012\Projects\Project\Project\Project.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.79

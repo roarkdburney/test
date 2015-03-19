@@ -1,0 +1,13 @@
+
+Serendipity Bookseller Receipt: 
+Date: Wed Mar 18 20:25:39 2015
+
+ISBN        :   97806797231655555
+TITLE       :   Lolita
+AUTHOR      :   Vladimir Nabokov
+PUBLISHER   :   Vintage International
+
+Subtotal : $27
+Tax      : $2.6325
+Total    : $29.6325
+

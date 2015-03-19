@@ -1,0 +1,28 @@
+
+Serendipity Bookseller Receipt: 
+Date: Wed Mar 18 18:13:05 2015
+
+ISBN        :   978055357340444
+TITLE       :   A Game of Thrones
+AUTHOR      :   George R.R Martin
+PUBLISHER   :   Bantam
+
+Serendipity Bookseller Receipt: 
+Date: Wed Mar 18 18:13:05 2015
+
+ISBN        :   9781604961126510999
+TITLE       :   Lucky Star -- Volume 1
+AUTHOR      :   Kagami Yoshimizu
+PUBLISHER   :   Bandai Entertainment
+
+Serendipity Bookseller Receipt: 
+Date: Wed Mar 18 18:13:05 2015
+
+ISBN        :   978142150851509999
+TITLE       :   Hayate the Combat Butler -- Volume 1
+AUTHOR      :   Kenjiro Hata
+PUBLISHER   :   Viz Media
+Subtotal : $329
+Tax      : $32.0775
+Total    : $361.077
+
